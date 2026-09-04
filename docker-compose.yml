@@ -23,5 +23,5 @@ services:
 
 networks:
   vpn_net:
-    name: vpn-internal-net
+    name: vpn-unifor-internal
     external: true

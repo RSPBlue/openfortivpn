@@ -22,7 +22,10 @@ iptables -t mangle -A FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-m
 dnsmasq \
   --listen-address=172.28.0.2 \
   --bind-interfaces \
+  --domain=unifor.br \
   --server=/unifor.br/172.29.0.3 \
+  --server=//172.29.0.3 \
+  --server=172.29.0.3 \
   --server=1.1.1.1 \
   --user=root &
 

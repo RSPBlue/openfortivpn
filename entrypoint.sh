@@ -11,12 +11,12 @@ fi
 # Enable NAT masquerading
 iptables -t nat -A POSTROUTING -o ppp+ -j MASQUERADE || true
 
-# Start dnsmasq with correct flags:
-# -k / --keep-in-foreground or backgrounded without conflicting options
+# Forward .unifor.br queries directly to the VPN DNS, and everything else to 1.1.1.1
 dnsmasq \
   --listen-address=172.28.0.2 \
   --bind-interfaces \
-  --resolv-file=/etc/resolv.conf \
+  --server=/unifor.br/172.29.0.3 \
+  --server=1.1.1.1 \
   --user=root &
 
 # Launch openfortivpn

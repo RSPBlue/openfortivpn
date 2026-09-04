@@ -1,19 +1,24 @@
 #!/bin/bash
 set -e
 
-# Create /dev/ppp device if missing
+# Create /dev/ppp if missing
 if [ ! -c /dev/ppp ]; then
     mkdir -p /dev
     mknod /dev/ppp c 108 0
     chmod 600 /dev/ppp
 fi
 
-# Allow forwarding between docker network (eth0) and VPN tunnel (ppp+)
+# 1. Packet Forwarding Rules
 iptables -A FORWARD -i eth0 -o ppp+ -j ACCEPT
 iptables -A FORWARD -i ppp+ -o eth0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+
+# 2. NAT Masquerading for the VPN interface
 iptables -t nat -A POSTROUTING -o ppp+ -j MASQUERADE
 
-# Forward .unifor.br queries directly to the VPN DNS, and everything else to 1.1.1.1
+# 3. MSS Clamping (prevents packet drops from MTU mismatch between Docker & PPP)
+iptables -t mangle -A FORWARD -p tcp --tcp-flags SYN,RST SYN -j TCPMSS --clamp-mss-to-pmtu
+
+# 4. Start dnsmasq
 dnsmasq \
   --listen-address=172.28.0.2 \
   --bind-interfaces \
@@ -21,7 +26,7 @@ dnsmasq \
   --server=1.1.1.1 \
   --user=root &
 
-# Launch openfortivpn
+# 5. Launch openfortivpn
 exec openfortivpn "${VPNADDR}" \
   --username="${VPNUSER}" \
   --password="${VPNPASS}" \

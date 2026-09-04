@@ -1,6 +1,12 @@
-FROM alpine:3.20
+FROM debian:bookworm-slim
 
-RUN apk add --no-cache openfortivpn iptables ppp
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    openfortivpn \
+    iptables \
+    ppp \
+    ca-certificates \
+    iproute2 \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh

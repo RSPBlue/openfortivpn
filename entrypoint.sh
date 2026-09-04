@@ -8,15 +8,15 @@ if [ ! -c /dev/ppp ]; then
     chmod 600 /dev/ppp
 fi
 
-# Enable NAT masquerading for all VPN traffic passing through ppp
+# Enable NAT masquerading
 iptables -t nat -A POSTROUTING -o ppp+ -j MASQUERADE || true
 
-# Start dnsmasq in the background listening on the container's static IP
+# Start dnsmasq with correct flags:
+# -k / --keep-in-foreground or backgrounded without conflicting options
 dnsmasq \
   --listen-address=172.28.0.2 \
   --bind-interfaces \
   --resolv-file=/etc/resolv.conf \
-  --poll \
   --user=root &
 
 # Launch openfortivpn

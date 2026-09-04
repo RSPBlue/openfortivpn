@@ -1,11 +1,18 @@
-#!/bin/sh
+#!/bin/bash
 set -e
 
-# Set up NAT masquerading so other containers can route traffic through the tunnel
+# Create /dev/ppp character device if missing
+if [ ! -c /dev/ppp ]; then
+    mkdir -p /dev
+    mknod /dev/ppp c 108 0
+    chmod 600 /dev/ppp
+fi
+
+# Enable NAT masquerading
 iptables -t nat -A POSTROUTING -o ppp+ -j MASQUERADE || true
 
-# Launch openfortivpn
-exec openfortivpn ${VPNADDR} \
+# Execute openfortivpn
+exec openfortivpn "${VPNADDR}" \
   --username="${VPNUSER}" \
   --password="${VPNPASS}" \
   ${TRUSTED_CERT:+--trusted-cert="${TRUSTED_CERT}"} \

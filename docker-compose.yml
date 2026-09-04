@@ -8,12 +8,14 @@ services:
       - NET_ADMIN
     devices:
       - /dev/net/tun:/dev/net/tun
+      - /dev/ppp:/dev/ppp
     sysctls:
       - net.ipv4.ip_forward=1
     environment:
       - VPNADDR=${VPN_ADDR}
       - VPNUSER=${VPN_USER}
       - VPNPASS=${VPN_PASS}
+      # - TRUSTED_CERT=your_sha256_hash_here
     networks:
       vpn_net:
         ipv4_address: 172.28.0.2
@@ -21,5 +23,5 @@ services:
 
 networks:
   vpn_net:
-    name: vpn-unifor-internal
+    name: vpn-internal-net
     external: true

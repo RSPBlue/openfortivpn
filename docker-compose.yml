@@ -17,11 +17,11 @@ services:
       - VPNPASS=${VPN_PASS}
       # - TRUSTED_CERT=your_sha256_hash_here
     networks:
-      vpn_net:
+      vpn-unifor-internal:
         ipv4_address: 172.28.0.2
     restart: unless-stopped
 
 networks:
-  vpn_net:
+  vpn-unifor-internal:
     name: vpn-unifor-internal
     external: true

@@ -15,11 +15,19 @@ services:
       - VPNADDR=${VPN_ADDR}
       - VPNUSER=${VPN_USER}
       - VPNPASS=${VPN_PASS}
+      - PERSISTENT_INTERVAL=${PERSISTENT_INTERVAL:-5}
+      - HEALTHCHECK_TARGET=${HEALTHCHECK_TARGET:-172.29.0.3}
       # - TRUSTED_CERT=your_sha256_hash_here
     networks:
       vpn-unifor-internal:
         ipv4_address: 172.28.0.2
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "/healthcheck.sh"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
 
 networks:
   vpn-unifor-internal:

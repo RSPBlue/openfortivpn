@@ -30,8 +30,11 @@ dnsmasq \
   --user=root &
 
 # 5. Launch openfortivpn
+PERSISTENT_INTERVAL="${PERSISTENT_INTERVAL:-5}"
+
 exec openfortivpn "${VPNADDR}" \
   --username="${VPNUSER}" \
   --password="${VPNPASS}" \
+  --persistent="${PERSISTENT_INTERVAL}" \
   ${TRUSTED_CERT:+--trusted-cert="${TRUSTED_CERT}"} \
   ${EXTRA_ARGS}
